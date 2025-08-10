@@ -1,19 +1,25 @@
 <template>
   <div class="vv">
     <h1>註冊帳號</h1>
-    EMAIL：<input type="email" v-model="sginupField.email" /> <br />
-    暱稱：<input type="text" v-model="sginupField.nickname" /> <br />
-    密碼：<input type="password" v-model="sginupField.password" /> <br />
-    再次輸入密碼：<input type="password" v-model="password2" /> <br />
+    <!-- EMAIL： -->
+    <input type="email" v-model="sginupField.email" class="form-control" placeholder="請輸入EMAIL"/> <br />
+    <!-- 暱稱： -->
+    <input type="text" v-model="sginupField.nickname" class="form-control" placeholder="請輸入暱稱"/> <br />
+    <!-- 密碼： -->
+    <input type="password" v-model="sginupField.password" class="form-control" placeholder="請輸入密碼" /> <br />
+    <!-- 再次輸入密碼： -->
+    <input type="password" v-model="password2" class="form-control" placeholder="請再次輸入密碼" /> <br />
     <span class="warn" v-if="pass12">{{ passwordIsMatch }} <br /></span>
-    <button type="button" @click="signup">註冊帳號</button>
+    <button type="button" @click="signup"   class="btn btn-info" >註冊帳號</button>
   </div>
   <hr />
   <div class="vv">
     <h1>登入</h1>
-    EMAIL： <input type="email" v-model="signInField.email" /> <br />
-    密碼： <input type="password" v-model="signInField.password" /> <br />
-    <button type="button" @click="signIn">登入</button> <br />
+    <!-- EMAIL：  -->
+    <input type="email" v-model="signInField.email" class="form-control" placeholder="請輸入EMAIL" /> <br />
+    <!-- 密碼：  -->
+    <input type="password" v-model="signInField.password" class="form-control" placeholder="請輸入密碼" /> <br />
+    <button type="button" @click="signIn"  class="btn btn-info">登入</button> <br />
     <p v-if="signInres.status == 200" class="success">
       {{ signInres.nickname }} 您好，token = <br />
       {{ signInres.token }}
@@ -24,8 +30,9 @@
   <hr />
   <div class="vv">
     <h1>驗證</h1>
-    token： <input type="text" v-model="inputToken" /> <br />
-    <button type="button" @click="checkToken">驗證</button> <br />
+    <!-- token： -->
+    <input type="text" v-model="inputToken" class="form-control" placeholder="請輸入token"/> <br />
+    <button type="button" @click="checkToken"  class="btn btn-info">驗證</button> <br />
     <p class="success" v-if="checkOk">
       驗證成功，您的UID: <br />
       {{ uid }}
@@ -34,10 +41,19 @@
   <hr />
   <div class="vv">
     <h1>todoList</h1>
-    <input type="text" v-model="newTodo" />
-    <button type="button" @click="addTodo">新增todolist</button>
-    <div v-for="(item, index) in showTodores" :key="index">
-      {{ item.content }}
+    <input type="text" v-model="newTodo.content" class="form-control" placeholder="請輸入todo" />
+    <button type="button" @click="addTodo"  class="btn btn-info">新增todolist</button>
+    <div class="todo" v-for="(item, index) in showTodores" :key="index">
+      {{ item.content }} <br>
+      <input type="text" class="form-control" v-model="tempTodo.content" v-if="showi == index">
+      <br>
+      <button class="btn btn-warning" type="button" @click="editTodo(index)" v-if="editBut" >修改</button>　
+      <div v-if="showi == index">
+        <button type="button" @click="confirmTodo(index)">確認</button>
+        <button type="button" @click="canTodo"> 取消</button>
+      </div>
+      <button class="btn btn-danger" type="button" @click="delTodo(index)" v-else>刪除</button>
+
     </div>
   </div>
 </template>
@@ -46,23 +62,65 @@ import { ref } from 'vue'
 import axios from 'axios'
 const url = 'https://todolist-api.hexschool.io'
 
-const newTodo = ref('')
+
+
+
+const confirmTodo = (index)=>{
+  showTodores.value[index].content = tempTodo.value.content;
+  showi.value = '取消';
+  editBut.value = true;
+  // tempTodo.value = {};
+}
+
+const canTodo = ()=>{
+  tempTodo.value = {};
+  showi.value = '取消';
+  editBut.value = true;
+}
+
+const tempTodo = ref({});
+const showi = ref('取消');
+const editBut = ref(true);
+
+const editTodo = (index)=>{
+  if (showi.value ==='取消'){
+    showi.value = index;
+    editBut.value = false;
+    tempTodo.value = {...showTodores.value[index]};
+  }else{
+    showi.value ='取消'
+  }
+}
+
+const newTodo = ref({
+  content: '',
+})
 const addTodo = async () => {
-  console.log('newTodo.value', newTodo.value)
-  const res = await axios.post(`${url}/todos/`, { content: newTodo.value })
-  console.log('newTodo', res)
+  try {
+    console.log('newTodo.value', newTodo.value)
+    const res = await axios.post(`${url}/todos/`, {content: newTodo.value.content},{
+      headers:{
+        Authorization: inputToken.value,
+      }
+    })
+    console.log('newTodo', res)
+    showTodo()
+  } catch (error) {
+    console.log('addTodo_error:', error)
+  }
 }
 
 const showTodores = ref({})
 const showTodo = async () => {
+  console.log('token:', inputToken)
   const res = await axios.get(`${url}/todos/`, {
     headers: {
       Authorization: inputToken.value,
     },
   })
   console.log('newtodo', res)
-  showTodores.value = res.data.data
-  console.log(showTodores.value)
+  showTodores.value = {...res.data.data}
+  console.log('showTodores', showTodores.value)
 }
 
 const inputToken = ref('')
@@ -73,7 +131,7 @@ const checkToken = async () => {
     /(?:(?:^|.*;\s*)todoName\s*\=\s*([^;]*).*$)|^.*$/,
     '$1',
   )
-  console.log(todoCookie)
+
   const res = await axios.get(`${url}/users/checkout`, {
     headers: {
       Authorization: todoCookie,
@@ -84,6 +142,7 @@ const checkToken = async () => {
     uid.value = res.data.uid
     checkOk.value = true
     showTodo()
+    console.log(todoCookie)
   } else {
     checkOk.value = false
   }
@@ -144,7 +203,7 @@ const signup = async () => {
 .success {
   padding-left: 22px;
   color: red;
-  max-width: 250px;
+  max-width: 333px;
   /* display: inline-block; */
   word-break: break-all;
 }
@@ -157,5 +216,12 @@ const signup = async () => {
   border-radius: 20px;
   padding: 12px;
   margin: 12px;
+}
+.todo{
+  border: 1px solid gray;
+  border-radius: 20px;
+  padding: 12px;
+  margin: 12px;
+  word-break: break-all;
 }
 </style>
