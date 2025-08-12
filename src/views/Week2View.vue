@@ -48,24 +48,24 @@
     <div class="right">
 
       <div class="vv">
-    <h1>todoList</h1>
-    <input type="text" v-model="newTodo.content" class="form-control" placeholder="請輸入todo" />
-    <button type="button" @click="addTodo"  class="btn btn-info">新增todolist</button>　　
-    <button type="button" @click="refreshTodo" class="btn btn-success">重新取得Todo</button>
-    <div class="todo" v-for="(item, index) in showTodores" :key="index">
-      {{ new Date(item.createTime * 1000).toLocaleString('zh-TW') }} <br>
-      {{ item.content }} <br>
-      <input type="text" class="form-control" v-model="tempTodo.content" v-if="showi == index">
-      <br>
-      <button class="btn btn-warning" type="button" @click="editTodo(index)" v-if="editBut" >修改</button>　
-      <div v-if="showi == index">
-        <button type="button" @click="confirmTodo(index)">確認</button>　
-        <button type="button" @click="canTodo"> 取消</button>
-      </div>
-      <button class="btn btn-danger" type="button" @click="delTodo(item.id, index)" v-else>刪除</button>
+        <h1>todoList</h1>
+        <input type="text" v-model="newTodo.content" class="form-control" placeholder="請輸入todo" />
+        <button type="button" @click="addTodo"  class="btn btn-info">新增todolist</button>　　
+        <button type="button" @click="refreshTodo" class="btn btn-success">重新取得Todo</button>
+        <div class="todo" v-for="(item, index) in showTodores" :key="index">
+          {{ new Date(item.createTime * 1000).toLocaleString('zh-TW') }} <br>
+          {{ item.content }} <br>
+          <input type="text" class="form-control" v-model="tempTodo.content" v-if="showi == index">
+          <br>
+          <button class="btn btn-warning" type="button" @click="editTodo(index)" v-if="editBut" >修改</button>　
+          <div v-if="showi == index">
+            <button type="button" @click="confirmTodo(index)">確認</button>　
+            <button type="button" @click="canTodo"> 取消</button>
+          </div>
+          <button class="btn btn-danger" type="button" @click="delTodo(item.id, index)" v-else>刪除</button>
 
-    </div>
-  </div>
+        </div>
+      </div>
     </div>
   </div>
 
