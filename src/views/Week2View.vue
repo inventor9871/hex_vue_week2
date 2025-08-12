@@ -209,7 +209,7 @@ const checkOk = ref(false);
 const checkToken = async () => {
   const todoCookie = document.cookie.replace(
     /(?:(?:^|.*;\s*)todoName\s*\=\s*([^;]*).*$)|^.*$/,  '$1', )
-  console.log(todoCookie)
+  console.log('todoCookie', todoCookie)
   const res = await axios.get(`${url}/users/checkout`, {
     headers: {
       Authorization: todoCookie,
