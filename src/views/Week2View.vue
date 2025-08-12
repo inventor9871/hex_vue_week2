@@ -204,13 +204,12 @@ const showTodo = async () => {
 
 const inputToken = ref('')
 const uid = ref('')
-const checkOk = ref(false)
+const checkOk = ref(false);
+
 const checkToken = async () => {
   const todoCookie = document.cookie.replace(
-    /(?:(?:^|.*;\s*)todoName\s*\=\s*([^;]*).*$)|^.*$/,
-    '$1',
-  )
-
+    /(?:(?:^|.*;\s*)todoName\s*\=\s*([^;]*).*$)|^.*$/,  '$1', )
+  console.log(todoCookie)
   const res = await axios.get(`${url}/users/checkout`, {
     headers: {
       Authorization: todoCookie,
@@ -219,7 +218,7 @@ const checkToken = async () => {
 
   console.log('checkToken ', res)
 
-  if (inputToken.value === todoCookie) {
+  if (inputToken.value == todoCookie) {
     uid.value = res.data.uid
     checkOk.value = true
     showTodo()
@@ -239,9 +238,7 @@ const signInres = ref({
   status: '',
 })
 const signIn = async () => {
-  // console.log(signInField.value);
   try {
-    // console.log(`${url}/users/sign_in`)
     const res = await axios.post(`${url}/users/sign_in`, signInField.value)
     console.log(res)
     signInres.value.nickname = res.data.nickname
