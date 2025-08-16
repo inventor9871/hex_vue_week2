@@ -71,7 +71,10 @@
         </div>
         <hr />
 
-        <!-- 驗證 -->
+      </div>
+      <div class="col">
+
+                <!-- 驗證 -->
         <div class="vv">
           <h1>驗證</h1>
           <!-- token： -->
@@ -84,8 +87,7 @@
           </p>
         </div>
         <hr />
-      </div>
-      <div class="col">
+
         <!-- todoList -->
         <div class="vv">
           <h1>todoList</h1>
@@ -124,12 +126,13 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import axios from 'axios'
 const url = 'https://todolist-api.hexschool.io'
 
 const refreshTodo = async () => {
-  await showTodo()
+  // await showTodo()
+  await checkToken();
 }
 const delTodo = async (id, index) => {
   console.log('id=', id, ' todo=', showTodores.value[index].id)
@@ -206,10 +209,20 @@ const inputToken = ref('')
 const uid = ref('')
 const checkOk = ref(false);
 
+let todoCookie = '';
+onMounted( async()=>{
+  todoCookie = document.cookie.replace(/(?:(?:^|.*;\s*)todoName\s*=\s*([^;]*).*$)|^.*$/,"$1",);
+  inputToken.value = todoCookie;
+  showTodo()
+});
+
 const checkToken = async () => {
-  const todoCookie = document.cookie.replace(
-    /(?:(?:^|.*;\s*)todoName\s*\=\s*([^;]*).*$)|^.*$/,  '$1', )
-  console.log('todoCookie', todoCookie)
+  todoCookie = document.cookie.replace(/(?:(?:^|.*;\s*)todoName\s*=\s*([^;]*).*$)|^.*$/,"$1",);
+  // const todoCookie = document.cookie.replace(/(?:^|.*;\s*)todoName\s*=\s*([^;]*).*$/i, "$1");
+    // const todoCookie = document.cookie.replace( /(?:(?:^|.*;\s*)todoName\s*\=\s*([^;]*).*$)|^.*$/,  '$1', );
+  console.log('todoCookie', todoCookie);
+  inputToken.value = todoCookie;
+
   const res = await axios.get(`${url}/users/checkout`, {
     headers: {
       Authorization: todoCookie,
@@ -248,6 +261,7 @@ const signIn = async () => {
     const expireDate = new Date(res.data.exp * 1000)
     expireDate.setDate(expireDate.getDate() - 1)
     document.cookie = `todoName=${res.data.token}; expires=${expireDate.toUTCString()}; path=/`
+    // document.cookie = `todoName=${res.data.token}; expires=${expireDate.toUTCString()}; path=/`
     console.log('expireDate= ', expireDate)
   } catch (error) {
     console.log(error)

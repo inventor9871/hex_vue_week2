@@ -11,10 +11,11 @@ import { RouterLink, RouterView } from 'vue-router'
       <!-- <HelloWorld msg="You did it!" /> -->
 
       <nav>
-        <RouterLink to="/">Home</RouterLink> | 
-        <RouterLink to="/about">About</RouterLink> | 
-        <RouterLink to="/week1">week1</RouterLink> | 
-        <RouterLink to="/week2">week2</RouterLink> | 
+        <RouterLink to="/">Home</RouterLink> |
+        <RouterLink to="/about">About</RouterLink> |
+        <RouterLink to="/week1">week1</RouterLink> |
+        <RouterLink to="/week2">week2</RouterLink> |
+        <RouterLink to="/week3">week3</RouterLink> |
       </nav>
     </div>
   </header>
