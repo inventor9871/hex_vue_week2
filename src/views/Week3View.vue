@@ -12,7 +12,8 @@
 
       <!-- 購物車列表 -->
       <div class="col-md-8">
-        <table class="table">
+        <div  v-if="temp.length>0">
+          <table class="table">
           <thead>
             <tr>
               <th scope="col" width="50">操作</th>
@@ -45,33 +46,55 @@
             </tr>
             <tr>
               <td colspan="6">
-                <textarea
+                <!-- <textarea
                 class="form-control mb-3"
                 rows="1"
                 placeholder="備註"
                 v-model="item.note"
-              ></textarea>
+              ></textarea> -->
+              <!-- {{  item.note }} -->
+              <!-- <button type="button" v-on:click="noIce(index)">去冰</button> -->
+               <select name="ice" class="form-select"
+               v-model="item.ice"
+               @change="noIce(index)">
+                <option value="" disabled selected>冰塊選項</option>
+                <option value="少點冰">少點冰</option>
+                <option value="去冰">去冰</option>
+               </select> |
+               <select name="sugar" class="form-select"
+               v-model="item.sugar"
+               @change="noSugar(index)">
+                <option value="" disabled selected>糖分選項</option>
+                <option value="少點糖">少點糖</option>
+                <option value="半糖">半糖</option>
+               </select>
               </td>
             </tr>
             </template>
 
           </tbody>
         </table>
-        <div class="text-end mb-3">
-          <h5>總計: <span>${{ tempPrice }}</span></h5>
+          <div class="text-end mb-3">
+            <h5>總計: <span>${{ tempPrice }}</span></h5>
+          </div>
+          <!-- <textarea
+            class="form-control mb-3"
+            rows="3"
+            placeholder="備註"
+            v-model="note"
+          ></textarea> -->
+          <div class="text-end">
+            <button class="btn btn-primary"
+            @click="sendOrder">送出</button>
+          </div>
         </div>
-        <!-- <textarea
-          class="form-control mb-3"
-          rows="3"
-          placeholder="備註"
-          v-model="note"
-        ></textarea> -->
-        <div class="text-end">
-          <button class="btn btn-primary"
-          @click="sendOrder">送出</button>
-        </div>
+        <div v-else class="alert alert-success">
+        尚未選取飲品
       </div>
+      </div>
+
     </div>
+
     <hr />
 
     <!-- 訂單列表 -->
@@ -122,6 +145,18 @@ tempPrice.value = computed(()=>{
 },0)
 })
 
+// 冰塊的備註
+// const noIceValue = ref('')
+const noIce = (index)=>{
+  temp.value[index].note += temp.value[index].ice +' | '
+}
+
+// 糖分的備註
+// const noSugarValue = ref('')
+const noSugar = (index)=>{
+  temp.value[index].note += temp.value[index].sugar +' | '
+}
+
 // 每項商品的小計
 const itemSubtotal=(item)=>{
   item.subTotal = item.amount * item.price;
@@ -140,7 +175,7 @@ const temp = ref([])
 const addItem = (item) => {
 
   // 預設商品是一項，小計=數量*價格
-  const tempItem = {...item, amount: 1, subTotal: 0, note:''}
+  const tempItem = {...item, amount: 1, subTotal: 0, note:'', ice:'', sugar:''}
   tempItem.subTotal = (tempItem.amount, tempItem.price)
   temp.value.push(tempItem);
   // console.log(temp.value)

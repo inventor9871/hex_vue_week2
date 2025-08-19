@@ -1,4 +1,5 @@
 <template>
+  <!-- 訂單 -->
   <div class="row justify-content-center"  v-if="order.drinks.length > 0 ">
       <div class="col-8">
         <div class="card">
